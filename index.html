@@ -1,3 +1,6 @@
+<!-- FULL HTML WITH ALL LEVELS INCLUDED -->
+<!-- Updated below -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,7 +36,6 @@
     }
 
     .level {
-      display: none;
       margin-top: 20px;
     }
 
@@ -46,10 +48,6 @@
       font-style: italic;
       font-size: 1.05rem;
       color: #ccc;
-      margin-bottom: 15px;
-    }
-
-    .suspects {
       margin-bottom: 15px;
     }
 
@@ -90,6 +88,22 @@
       text-align: center;
     }
 
+    .conclusion {
+      background-color: #003344;
+      border-left: 5px solid #00f7ff;
+      padding: 15px;
+      margin-top: 15px;
+      font-style: italic;
+      display: none;
+    }
+
+    #scoreDisplay {
+      margin-top: 10px;
+      font-size: 1.1rem;
+      color: #f9f871;
+      text-align: center;
+    }
+
     @keyframes fadeIn {
       from { opacity: 0; }
       to { opacity: 1; }
@@ -107,98 +121,54 @@
 </head>
 <body>
   <h1>Cyber Era</h1>
+  <div id="scoreDisplay">🔍 Score: 0</div>
   <button id="startBtn" onclick="startGame()" style="padding: 15px 30px; font-size: 1.2rem; font-weight: bold; background-color: #00f7ff; color: black; border: none; border-radius: 10px; cursor: pointer; margin-top: 20px;">Start Investigation</button>
-  <div class="game-container">
-    <!-- Game levels here -->
-    <!-- Level 1 -->
-    <div class="level" id="level1">
-      <div class="storyline">📁 An employee at Synerbyte Corp received a suspicious email linking to a fake login page. You’re investigating the breach to identify if this was a phishing attack and who could be behind it.</div>
-      <div class="suspects">
-        <p><strong>Suspect A - Priya (Junior Analyst):</strong> Claims she clicked the link but didn’t enter credentials.</p>
-        <p><strong>Suspect B - Ramesh (Network Admin):</strong> Has access to internal logs and tools. Was offsite that day.</p>
-        <p><strong>Suspect C - Nidhi (Contract Employee):</strong> Recently had access revoked and used a similar domain for personal projects.</p>
-      </div>
-      <div class="question">Which clue indicates the email was a phishing attempt?</div>
-      <div class="options">
-        <button onclick="checkAnswer(1, false)">Email was sent during work hours</button>
-        <button onclick="checkAnswer(1, true)">Domain slightly misspelled</button>
-        <button onclick="checkAnswer(1, false)">Subject line was normal</button>
-      </div>
-      <div class="culprit-btn">
-        <p>Who is the culprit?</p>
-        <button onclick="catchCulprit(1, 'Priya')">Priya</button>
-        <button onclick="catchCulprit(1, 'Ramesh')">Ramesh</button>
-        <button onclick="catchCulprit(1, 'Nidhi')">Nidhi</button>
-      </div>
-      <button class="next-btn" id="next1" onclick="nextLevel(2)">Next Level</button>
-    </div>
-
-    <!-- Level 2 -->
-    <div class="level" id="level2">
-      <div class="storyline">🌐 An unauthorized login attempt was detected on the finance server from an unknown IP. You need to trace this digital fingerprint and narrow down the suspects.</div>
-      <div class="suspects">
-        <p><strong>Suspect A - Nidhi:</strong> Had shared her credentials with a colleague once under pressure.</p>
-        <p><strong>Suspect B - Ramesh:</strong> Maintains VPN infrastructure and once forgot to rotate credentials after contract ended.</p>
-        <p><strong>Suspect C - Priya:</strong> Had remote access terminated last week but was seen trying to access old accounts.</p>
-      </div>
-      <div class="question">What should you check to verify the login attempt?</div>
-      <div class="options">
-        <button onclick="checkAnswer(2, false)">Font of the report</button>
-        <button onclick="checkAnswer(2, true)">IP address in logs</button>
-        <button onclick="checkAnswer(2, false)">Size of the document</button>
-      </div>
-      <div class="culprit-btn">
-        <p>Who is the culprit?</p>
-        <button onclick="catchCulprit(2, 'Priya')">Priya</button>
-        <button onclick="catchCulprit(2, 'Ramesh')">Ramesh</button>
-        <button onclick="catchCulprit(2, 'Nidhi')">Nidhi</button>
-      </div>
-      <button class="next-btn" id="next2" onclick="nextLevel(3)">Next Level</button>
-    </div>
-
-    <!-- Level 3 -->
-    <div class="level" id="level3">
-      <div class="storyline">🗂️ A sensitive financial report was deleted from the shared server. You must determine how it was removed and who had access.</div>
-      <div class="suspects">
-        <p><strong>Suspect A - Priya:</strong> Had access to the shared folder but reported no recent activity.</p>
-        <p><strong>Suspect B - Ramesh:</strong> Has backup server access but logs show no recent activity.</p>
-        <p><strong>Suspect C - Nidhi:</strong> Used a USB drive to copy files before being let go. The timing matches deletion.</p>
-      </div>
-      <div class="question">What tool can help recover information from the deleted file?</div>
-      <div class="options">
-        <button onclick="checkAnswer(3, false)">Empty recycle bin</button>
-        <button onclick="checkAnswer(3, true)">Memory snapshot</button>
-        <button onclick="checkAnswer(3, false)">Clean disk tool</button>
-      </div>
-      <div class="culprit-btn">
-        <p>Who is the culprit?</p>
-        <button onclick="catchCulprit(3, 'Priya')">Priya</button>
-        <button onclick="catchCulprit(3, 'Ramesh')">Ramesh</button>
-        <button onclick="catchCulprit(3, 'Nidhi')">Nidhi</button>
-      </div>
-      <div class="complete" id="completion" style="display:none;">🎉 Mission Complete: You followed the evidence and caught all culprits!</div>
-    </div>
+  <div class="game-container" id="gameContainer"></div>
+  <div class="complete" id="completion" style="display:none;">
+    🎉 Mission Complete: You followed the evidence and caught all culprits!<br>
+    🏅 Final Score: <span id="finalScore"></span><br>
+    📊 Rating: <span id="rating"></span>
   </div>
 
   <script>
     let currentLevel = 1;
-    let correctAnswers = { 1: "Nidhi", 2: "Ramesh", 3: "Nidhi" };
-    let levelSolved = { 1: false, 2: false, 3: false };
+    let score = 0;
+    let correctAnswers = {
+      1: "Nidhi",
+      2: "Ramesh",
+      3: "Nidhi",
+      4: "Karan",
+      5: "Sneha"
+    };
+    let levelSolved = {};
 
     function startGame() {
       document.getElementById("startBtn").style.display = "none";
-      document.getElementById("level1").style.display = "block";
+      renderLevel(1);
+    }
+
+    function updateScore(points) {
+      score += points;
+      document.getElementById("scoreDisplay").textContent = `🔍 Score: ${score}`;
+    }
+
+    function renderLevel(level) {
+      const game = document.getElementById("gameContainer");
+      game.innerHTML = levels[level];
     }
 
     function checkAnswer(level, correct) {
       const hints = {
         1: "💡 Phishing emails often have slight domain misspellings. Recheck the sender!",
         2: "💡 IP logs can trace suspicious access. Think like a tracker!",
-        3: "💡 Even deleted files leave traces. Where might volatile data be captured?"
+        3: "💡 Even deleted files leave traces. Where might volatile data be captured?",
+        4: "💡 Browser history often reveals intent. Who researched attack vectors?",
+        5: "💡 Look for someone who benefited most from the financial fraud."
       };
 
       if (correct) {
         levelSolved[level] = true;
+        updateScore(10);
         alert("✅ Clue correct! Now analyze the suspects.");
       } else {
         alert("❌ Incorrect clue. Here's a hint:\n" + hints[level]);
@@ -209,7 +179,9 @@
       const culpritHints = {
         1: "💡 Who had access to a similar domain and was recently revoked?",
         2: "💡 Look at who had VPN control and neglected credential hygiene.",
-        3: "💡 USB access + matching time of deletion = strong suspicion."
+        3: "💡 USB access + matching time of deletion = strong suspicion.",
+        4: "💡 The attacker had technical knowledge and recent disputes.",
+        5: "💡 Consider internal access + large unauthorized fund movement."
       };
 
       if (!levelSolved[level]) {
@@ -219,10 +191,15 @@
 
       if (suspect === correctAnswers[level]) {
         alert("🎯 Correct! " + suspect + " was the culprit.");
-        if (level < 3) {
-          document.getElementById("next" + level).style.display = "block";
-        } else {
+        updateScore(20);
+        document.getElementById("conclusion").style.display = "block";
+        const nextBtn = document.getElementById("nextBtn");
+        if (nextBtn) nextBtn.style.display = "block";
+        if (level === 5) {
           document.getElementById("completion").style.display = "block";
+          document.getElementById("finalScore").textContent = score;
+          let rating = score >= 50 ? "🕵️‍♂️ Cyber Sleuth" : score >= 30 ? "🔍 Forensics Analyst" : "🌟 Cyber Cadet";
+          document.getElementById("rating").textContent = rating;
         }
       } else {
         alert("❌ That's not the culprit. Rethink the digital evidence.\n" + culpritHints[level]);
@@ -230,10 +207,125 @@
     }
 
     function nextLevel(level) {
-      document.getElementById("level" + currentLevel).style.display = "none";
       currentLevel = level;
-      document.getElementById("level" + level).style.display = "block";
+      renderLevel(level);
     }
+
+    const levels = {
+      1: `<div class="level">
+        <div class="storyline">A phishing scam targeted a bank’s internal team using spoofed emails.</div>
+        <div class="question">🔍 Which clue points to the origin?</div>
+        <div class="options">
+          <button onclick="checkAnswer(1, false)">Encrypted PDF attachment</button>
+          <button onclick="checkAnswer(1, true)">Email from niidhi@bnk.com</button>
+          <button onclick="checkAnswer(1, false)">CC’d HR Department</button>
+        </div>
+        <div class="question">👤 Who is the culprit?</div>
+        <div class="suspects">
+          <p>🧑‍💻 Nidhi</p>
+          <p>🧑‍💼 Sohan</p>
+          <p>🧑‍🔧 Priya</p>
+        </div>
+        <div class="culprit-btn">
+          <button onclick="catchCulprit(1, 'Nidhi')">Nidhi</button>
+          <button onclick="catchCulprit(1, 'Sohan')">Sohan</button>
+          <button onclick="catchCulprit(1, 'Priya')">Priya</button>
+        </div>
+        <div class="conclusion" id="conclusion">Nidhi manipulated domains to trick internal staff and steal login credentials.</div>
+        <button class="next-btn" id="nextBtn" onclick="nextLevel(2)">Next Level</button>
+      </div>`,
+
+      2: `<div class="level">
+        <div class="storyline">VPN misuse led to unauthorized access into a server. IP logs suggest an insider.</div>
+        <div class="question">🔍 What was the clue?</div>
+        <div class="options">
+          <button onclick="checkAnswer(2, false)">Antivirus alerts</button>
+          <button onclick="checkAnswer(2, true)">Repeated login from same IP during night</button>
+          <button onclick="checkAnswer(2, false)">Firewall block logs</button>
+        </div>
+        <div class="question">👤 Who is the culprit?</div>
+        <div class="suspects">
+          <p>🧑‍💻 Nisha</p>
+          <p>🧑‍🔧 Ramesh</p>
+          <p>🧑‍🔬 Sunita</p>
+        </div>
+        <div class="culprit-btn">
+          <button onclick="catchCulprit(2, 'Nisha')">Nisha</button>
+          <button onclick="catchCulprit(2, 'Ramesh')">Ramesh</button>
+          <button onclick="catchCulprit(2, 'Sunita')">Sunita</button>
+        </div>
+        <div class="conclusion" id="conclusion">Ramesh misused his VPN credentials to access sensitive files at odd hours.</div>
+        <button class="next-btn" id="nextBtn" onclick="nextLevel(3)">Next Level</button>
+      </div>`,
+
+      3: `<div class="level">
+        <div class="storyline">Files were deleted just before a raid. USB logs and CCTV point to someone.</div>
+        <div class="question">🔍 What is the strongest clue?</div>
+        <div class="options">
+          <button onclick="checkAnswer(3, false)">Firewall logs</button>
+          <button onclick="checkAnswer(3, true)">USB mounted at 11:58 PM</button>
+          <button onclick="checkAnswer(3, false)">Email alerts</button>
+        </div>
+        <div class="question">👤 Who is the culprit?</div>
+        <div class="suspects">
+          <p>🧑‍💼 Meena</p>
+          <p>🧑‍💻 Nidhi</p>
+          <p>🧑‍🔬 Manoj</p>
+        </div>
+        <div class="culprit-btn">
+          <button onclick="catchCulprit(3, 'Meena')">Meena</button>
+          <button onclick="catchCulprit(3, 'Nidhi')">Nidhi</button>
+          <button onclick="catchCulprit(3, 'Manoj')">Manoj</button>
+        </div>
+        <div class="conclusion" id="conclusion">Nidhi deleted sensitive data using a USB before exit logs and fled.</div>
+        <button class="next-btn" id="nextBtn" onclick="nextLevel(4)">Next Level</button>
+      </div>`,
+
+      4: `<div class="level">
+        <div class="storyline">An internal tool was used to exfiltrate customer data. Browser history may reveal the culprit.</div>
+        <div class="question">🔍 What stands out?</div>
+        <div class="options">
+          <button onclick="checkAnswer(4, false)">Frequent downloads</button>
+          <button onclick="checkAnswer(4, false)">Cleared cookies</button>
+          <button onclick="checkAnswer(4, true)">Search: 'how to extract data from CRM'</button>
+        </div>
+        <div class="question">👤 Who is the culprit?</div>
+        <div class="suspects">
+          <p>🧑‍💼 Tanya</p>
+          <p>🧑‍💻 Karan</p>
+          <p>🧑‍🔬 Ritu</p>
+        </div>
+        <div class="culprit-btn">
+          <button onclick="catchCulprit(4, 'Tanya')">Tanya</button>
+          <button onclick="catchCulprit(4, 'Karan')">Karan</button>
+          <button onclick="catchCulprit(4, 'Ritu')">Ritu</button>
+        </div>
+        <div class="conclusion" id="conclusion">Karan had been planning and researching the exfiltration online.</div>
+        <button class="next-btn" id="nextBtn" onclick="nextLevel(5)">Next Level</button>
+      </div>`,
+
+      5: `<div class="level">
+        <div class="storyline">Massive unauthorized fund transfers took place from internal systems. One person gained.</div>
+        <div class="question">🔍 What's the smoking gun?</div>
+        <div class="options">
+          <button onclick="checkAnswer(5, false)">System restart log</button>
+          <button onclick="checkAnswer(5, true)">Unusual 2AM transaction from Sneha’s ID</button>
+          <button onclick="checkAnswer(5, false)">Disabled user account</button>
+        </div>
+        <div class="question">👤 Who is the culprit?</div>
+        <div class="suspects">
+          <p>🧑‍💼 Rahul</p>
+          <p>🧑‍💻 Sneha</p>
+          <p>🧑‍🔧 Kunal</p>
+        </div>
+        <div class="culprit-btn">
+          <button onclick="catchCulprit(5, 'Rahul')">Rahul</button>
+          <button onclick="catchCulprit(5, 'Sneha')">Sneha</button>
+          <button onclick="catchCulprit(5, 'Kunal')">Kunal</button>
+        </div>
+        <div class="conclusion" id="conclusion">Sneha used stolen credentials to transfer funds into dummy accounts.</div>
+      </div>`
+    };
   </script>
 </body>
 </html>
